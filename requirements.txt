@@ -1,0 +1,8 @@
+sqlalchemy
+flask
+flask_sqlalchemy
+flask_jwt_extended
+flask_cors
+pydantic
+mypy
+pytest
