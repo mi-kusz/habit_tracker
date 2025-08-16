@@ -2,7 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
-from config import DATABASE_PATH
+from app.config import DATABASE_PATH
 
 database: SQLAlchemy = SQLAlchemy()
 
