@@ -20,8 +20,10 @@ def create_app() -> Flask:
     CORS(app)
 
     from .routes.user_routes import user_blueprint
+    from .routes.category_routes import category_blueprint
 
     app.register_blueprint(user_blueprint, url_prefix="/users")
+    app.register_blueprint(category_blueprint, url_prefix="/categories")
 
     init_database(app)
 
