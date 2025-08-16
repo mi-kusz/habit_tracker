@@ -1,41 +1,29 @@
 from typing import Optional
 
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
-from app import database
-from app.exceptions import EntityNotFoundException, EntityPersistenceException
 from app.models import Category
-
-entity_type: str = "Category"
 
 
 def get_categories() -> list[Category]:
     return Category.query.all()
 
 
-def get_category_by_id(category_id: int) -> Category:
-    category: Optional[Category] = Category.query.get(category_id)
+def get_category_by_id(category_id: int) -> Optional[Category]:
+    return Category.query.get(category_id)
 
-    if category is None:
-        raise EntityNotFoundException(entity_type)
 
+def create_category(session: Session, category: Category) -> Category:
+    session.add(category)
     return category
 
 
-def create_category(category: Category) -> Category:
-    try:
-        database.session.add(category)
-        database.session.commit()
-        return category
-    except IntegrityError:
-        database.session.rollback()
-        raise EntityPersistenceException(entity_type)
+def create_default_category_for_user(session: Session, user_id: int) -> Category:
+    category = Category(
+        user_id=user_id,
+        name="Default",
+        description="Default category created on user creation"
+    )
 
-
-def update_category(category: Category) -> Category:
-    try:
-        database.session.commit()
-        return category
-    except IntegrityError:
-        database.session.rollback()
-        raise EntityPersistenceException(entity_type)
+    session.add(category)
+    return category
