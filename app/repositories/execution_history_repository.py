@@ -16,3 +16,8 @@ def get_execution_history_by_id(execution_history_id: int) -> Optional[Execution
 def create_execution_history(session: Session, execution_history: ExecutionHistory) -> ExecutionHistory:
     session.add(execution_history)
     return execution_history
+
+
+def delete_execution_history(session: Session, execution_history: ExecutionHistory) -> ExecutionHistory:
+    session.delete(execution_history)
+    return execution_history

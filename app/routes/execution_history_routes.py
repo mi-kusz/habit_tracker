@@ -47,3 +47,13 @@ def create_execution_history() -> tuple[Response, HTTPStatus]:
         return create_error_response(str(e.errors())), HTTPStatus.BAD_REQUEST
     except EntityPersistenceException as e:
         return create_error_response(str(e)), HTTPStatus.BAD_REQUEST
+
+
+@execution_history_blueprint.route("/<int:execution_history_id>", methods=["DELETE"])
+def delete_execution_history(execution_history_id: int) -> tuple[Response, HTTPStatus]:
+    try:
+        execution_history: ExecutionHistoryReadDTO = execution_history_service.delete_execution_history(execution_history_id)
+
+        return jsonify(execution_history.model_dump()), HTTPStatus.NO_CONTENT
+    except EntityNotFoundException as e:
+        return create_error_response(str(e)), HTTPStatus.NOT_FOUND

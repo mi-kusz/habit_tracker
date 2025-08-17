@@ -36,6 +36,15 @@ def create_execution_history(execution_history_dto: ExecutionHistoryCreateDTO) -
         raise EntityPersistenceException(entity_type)
 
 
+def delete_execution_history(execution_history_id: int) -> ExecutionHistoryReadDTO:
+    execution_history: ExecutionHistory = get_execution_history_entity(execution_history_id)
+
+    with database.session.begin():
+        execution_history_repository.delete_execution_history(database.session, execution_history)
+
+    return ExecutionHistoryReadDTO.model_validate(execution_history)
+
+
 def convert_dto_to_model(execution_history_dto: ExecutionHistoryCreateDTO) -> ExecutionHistory:
     return ExecutionHistory(
         habit_task_id=execution_history_dto.habit_task_id,
