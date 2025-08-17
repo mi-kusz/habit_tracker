@@ -16,3 +16,8 @@ def get_user_by_id(user_id: int) -> Optional[User]:
 def create_user(session: Session, user: User) -> User:
     session.add(user)
     return user
+
+
+def delete_user(session: Session, user: User) -> User:
+    session.delete(user)
+    return user

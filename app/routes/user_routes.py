@@ -65,3 +65,13 @@ def update_user(user_id: int) -> tuple[Response, HTTPStatus]:
         return create_error_response(str(e.errors())), HTTPStatus.BAD_REQUEST
     except EntityPersistenceException as e:
         return create_error_response(str(e)), HTTPStatus.BAD_REQUEST
+
+
+@user_blueprint.route("/<int:user_id>", methods=["DELETE"])
+def delete_user(user_id: int) -> tuple[Response, HTTPStatus]:
+    try:
+        user: UserReadDTO = user_service.delete_user(user_id)
+
+        return jsonify(user.model_dump()), HTTPStatus.OK
+    except EntityNotFoundException as e:
+        return create_error_response(str(e)), HTTPStatus.NOT_FOUND

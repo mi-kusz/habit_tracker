@@ -56,6 +56,15 @@ def update_user(user_id: int, user_updates: UserUpdateDTO) -> UserReadDTO:
     return UserReadDTO.model_validate(user)
 
 
+def delete_user(user_id: int) -> UserReadDTO:
+    user: User = get_user_entity(user_id)
+
+    with database.session.begin():
+        user_repository.delete_user(database.session, user)
+
+    return UserReadDTO.model_validate(user)
+
+
 def convert_dto_to_model(user_dto: UserCreateDTO) -> User:
     return User(
         first_name=user_dto.first_name,
