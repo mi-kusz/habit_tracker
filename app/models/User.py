@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
+from sqlalchemy.orm import relationship
 
 from app import database
 from ..utils import get_utc_time
@@ -15,3 +16,9 @@ class User(database.Model):
     is_active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, nullable=False, default=get_utc_time)
     updated_at = Column(DateTime, nullable=False, default=get_utc_time, onupdate=get_utc_time)
+
+    categories = relationship(
+        "Category",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
