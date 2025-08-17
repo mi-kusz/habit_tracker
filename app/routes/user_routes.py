@@ -72,6 +72,6 @@ def delete_user(user_id: int) -> tuple[Response, HTTPStatus]:
     try:
         user: UserReadDTO = user_service.delete_user(user_id)
 
-        return jsonify(user.model_dump()), HTTPStatus.OK
+        return jsonify(user.model_dump()), HTTPStatus.NO_CONTENT
     except EntityNotFoundException as e:
         return create_error_response(str(e)), HTTPStatus.NOT_FOUND
