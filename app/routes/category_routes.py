@@ -65,3 +65,13 @@ def update_category(category_id: int) -> tuple[Response, HTTPStatus]:
         return create_error_response(str(e.errors())), HTTPStatus.BAD_REQUEST
     except EntityPersistenceException as e:
         return create_error_response(str(e)), HTTPStatus.BAD_REQUEST
+
+
+@category_blueprint.route("/<int:category_id>", methods=["DELETE"])
+def delete_category(category_id: int) -> tuple[Response, HTTPStatus]:
+    try:
+        category: CategoryReadDTO = category_service.delete_category(category_id)
+
+        return jsonify(category.model_dump()), HTTPStatus.NO_CONTENT
+    except EntityNotFoundException as e:
+        return create_error_response(str(e)), HTTPStatus.NOT_FOUND

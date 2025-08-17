@@ -27,3 +27,8 @@ def create_default_category_for_user(session: Session, user_id: int) -> Category
 
     session.add(category)
     return category
+
+
+def delete_category(session: Session, category: Category) -> Category:
+    session.delete(category)
+    return category

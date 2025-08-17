@@ -17,7 +17,7 @@ def get_categories() -> list[CategoryReadDTO]:
     return [CategoryReadDTO.model_validate(category) for category in categories]
 
 
-def get_category_by_id(category_id) -> CategoryReadDTO:
+def get_category_by_id(category_id: int) -> CategoryReadDTO:
     category: Category = get_category_entity(category_id)
 
     return CategoryReadDTO.model_validate(category)
@@ -44,6 +44,15 @@ def update_category(category_id: int, category_updates: CategoryUpdateDTO) -> Ca
 
         if category_updates.description is not None:
             category.description = category_updates.description
+
+    return CategoryReadDTO.model_validate(category)
+
+
+def delete_category(category_id: int) -> CategoryReadDTO:
+    category: Category = get_category_entity(category_id)
+
+    with database.session.begin():
+        category_repository.delete_category(database.session, category)
 
     return CategoryReadDTO.model_validate(category)
 
