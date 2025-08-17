@@ -67,3 +67,13 @@ def update_habit_task(habit_task_id: int) -> tuple[Response, HTTPStatus]:
         return create_error_response(str(e.errors())), HTTPStatus.BAD_REQUEST
     except EntityPersistenceException as e:
         return create_error_response(str(e)), HTTPStatus.BAD_REQUEST
+
+
+@habit_task_blueprint.route("/<int:habit_task_id>", methods=["DELETE"])
+def delete_habit_task(habit_task_id: int) -> tuple[Response, HTTPStatus]:
+    try:
+        habit_task: HabitTaskReadDTO = habit_task_service.delete_habit_task(habit_task_id)
+
+        return jsonify(habit_task.model_dump()), HTTPStatus.NO_CONTENT
+    except EntityNotFoundException as e:
+        return create_error_response(str(e)), HTTPStatus.NOT_FOUND

@@ -52,6 +52,15 @@ def update_habit_task(habit_task_id: int, habit_task_updates: HabitTaskUpdateDTO
     return HabitTaskReadDTO.model_validate(habit_task)
 
 
+def delete_habit_task(habit_task_id: int) -> HabitTaskReadDTO:
+    habit_task: HabitTask = get_habit_task_entity(habit_task_id)
+
+    with database.session.begin():
+        habit_task_repository.delete_habit_task(database.session, habit_task)
+
+    return HabitTaskReadDTO.model_validate(habit_task)
+
+
 def convert_dto_to_model(habit_task_dto: HabitTaskCreateDTO) -> HabitTask:
     return HabitTask(
         category_id=habit_task_dto.category_id,
