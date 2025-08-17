@@ -49,9 +49,9 @@ def update_category(category_id: int, category_updates: CategoryUpdateDTO) -> Ca
 
 
 def delete_category(category_id: int) -> CategoryReadDTO:
-    category: Category = get_category_entity(category_id)
-
     with database.session.begin():
+        category: Category = get_category_entity(category_id)
+
         category_repository.delete_category(database.session, category)
 
     return CategoryReadDTO.model_validate(category)
