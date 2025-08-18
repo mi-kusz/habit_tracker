@@ -31,3 +31,10 @@ def str_to_int_or_none(string: Optional[str]) -> Optional[int]:
         return None
 
     return int(string)
+
+
+def str_to_datetime_or_none(string: Optional[str]) -> Optional[datetime]:
+    if string is None:
+        return None
+
+    return datetime.strptime(string, "%Y-%m-%d %H:%M:%S")

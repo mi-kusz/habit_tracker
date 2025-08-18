@@ -1,19 +1,26 @@
+from datetime import datetime
 from typing import Optional
 
 from sqlalchemy.exc import IntegrityError
-from app import database
 
+from app import database
 from app.dtos import ExecutionHistoryReadDTO, ExecutionHistoryCreateDTO
 from app.exceptions import EntityNotFoundException, EntityPersistenceException
 from app.models import ExecutionHistory
 from app.repositories import execution_history_repository
-
+from app.utils import str_to_int_or_none, str_to_datetime_or_none
 
 entity_type: str = "Execution history"
 
 
-def get_execution_histories() -> list[ExecutionHistoryReadDTO]:
-    execution_histories: list[ExecutionHistory] = execution_history_repository.get_execution_histories()
+def get_execution_histories(habit_task_id: Optional[str],
+                            start_datetime: Optional[str],
+                            end_datetime: Optional[str]) -> list[ExecutionHistoryReadDTO]:
+    habit_task_id_int: Optional[int] = str_to_int_or_none(habit_task_id)
+    start_datetime_dt: Optional[datetime] = str_to_datetime_or_none(start_datetime)
+    end_datetime_dt: Optional[datetime] = str_to_datetime_or_none(end_datetime)
+
+    execution_histories: list[ExecutionHistory] = execution_history_repository.get_execution_histories(habit_task_id_int, start_datetime_dt, end_datetime_dt)
 
     return [ExecutionHistoryReadDTO.model_validate(execution_history) for execution_history in execution_histories]
 

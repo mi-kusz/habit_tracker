@@ -15,10 +15,17 @@ execution_history_blueprint = Blueprint("execution_histories", __name__)
 
 @execution_history_blueprint.route("/", methods=["GET"])
 def get_execution_histories() -> tuple[Response, HTTPStatus]:
-    execution_histories: list[ExecutionHistoryReadDTO] = execution_history_service.get_execution_histories()
-    execution_histories_dicts: list[dict] = [execution_history.model_dump() for execution_history in execution_histories]
+    try:
+        habit_task_id: Optional[str] = request.args.get("habit_task_id")
+        start_datetime: Optional[str] = request.args.get("start_datetime")
+        end_datetime: Optional[str] = request.args.get("end_datetime")
 
-    return jsonify(execution_histories_dicts), HTTPStatus.OK
+        execution_histories: list[ExecutionHistoryReadDTO] = execution_history_service.get_execution_histories(habit_task_id, start_datetime, end_datetime)
+        execution_histories_dicts: list[dict] = [execution_history.model_dump() for execution_history in execution_histories]
+
+        return jsonify(execution_histories_dicts), HTTPStatus.OK
+    except ValueError as e:
+        return create_error_response(str(e)), HTTPStatus.BAD_REQUEST
 
 
 @execution_history_blueprint.route("/<int:execution_history_id>", methods=["GET"])
