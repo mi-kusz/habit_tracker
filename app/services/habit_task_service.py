@@ -7,13 +7,16 @@ from app.dtos import HabitTaskReadDTO, HabitTaskCreateDTO, HabitTaskUpdateDTO
 from app.exceptions import EntityNotFoundException, EntityPersistenceException
 from app.models import HabitTask
 from app.repositories import habit_task_repository
-
+from app.utils import str_to_int_or_none
 
 entity_type: str = "Habit Task"
 
 
-def get_habit_tasks() -> list[HabitTaskReadDTO]:
-    habit_tasks: list[HabitTask] = habit_task_repository.get_habit_tasks()
+def get_habit_tasks(category_id: Optional[str],
+                    name: Optional[str]) -> list[HabitTaskReadDTO]:
+    category_id_int: Optional[int] = str_to_int_or_none(category_id)
+
+    habit_tasks: list[HabitTask] = habit_task_repository.get_habit_tasks(category_id_int, name)
 
     return [HabitTaskReadDTO.model_validate(habit_task) for habit_task in habit_tasks]
 

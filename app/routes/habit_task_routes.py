@@ -15,10 +15,16 @@ habit_task_blueprint = Blueprint("habit_tasks", __name__)
 
 @habit_task_blueprint.route("/", methods=["GET"])
 def get_habit_tasks() -> tuple[Response, HTTPStatus]:
-    habit_tasks: list[HabitTaskReadDTO] = habit_task_service.get_habit_tasks()
-    habit_tasks_dicts: list[dict] = [habit_task.model_dump() for habit_task in habit_tasks]
+    try:
+        category_id: Optional[str] = request.args.get("category_id")
+        name: Optional[str] = request.args.get("name")
 
-    return jsonify(habit_tasks_dicts), HTTPStatus.OK
+        habit_tasks: list[HabitTaskReadDTO] = habit_task_service.get_habit_tasks(category_id, name)
+        habit_tasks_dicts: list[dict] = [habit_task.model_dump() for habit_task in habit_tasks]
+
+        return jsonify(habit_tasks_dicts), HTTPStatus.OK
+    except ValueError as e:
+        return create_error_response(str(e)), HTTPStatus.BAD_REQUEST
 
 
 @habit_task_blueprint.route("/<int:habit_task_id>", methods=["GET"])
