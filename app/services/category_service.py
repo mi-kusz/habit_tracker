@@ -1,18 +1,22 @@
 from typing import Optional
 
 from sqlalchemy.exc import IntegrityError
-from app import database
 
+from app import database
 from app.dtos import CategoryReadDTO, CategoryCreateDTO, CategoryUpdateDTO
 from app.exceptions import EntityNotFoundException, EntityPersistenceException
 from app.models import Category
 from app.repositories import category_repository
+from app.utils import str_to_int_or_none
 
 entity_type: str = "Category"
 
 
-def get_categories() -> list[CategoryReadDTO]:
-    categories: list[Category] = category_repository.get_categories()
+def get_categories(user_id: Optional[str],
+                   name: Optional[str]) -> list[CategoryReadDTO]:
+    user_id_int: Optional[int] = str_to_int_or_none(user_id)
+
+    categories: list[Category] = category_repository.get_categories(user_id_int, name)
 
     return [CategoryReadDTO.model_validate(category) for category in categories]
 

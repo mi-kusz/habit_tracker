@@ -14,9 +14,15 @@ category_blueprint = Blueprint("categories", __name__)
 
 @category_blueprint.route("/", methods=["GET"])
 def get_categories() -> tuple[Response, HTTPStatus]:
-    categories: list[CategoryReadDTO] = category_service.get_categories()
-    categories_dicts: list[dict] = [category.model_dump() for category in categories]
-    return jsonify(categories_dicts), HTTPStatus.OK
+    try:
+        user_id: Optional[str] = request.args.get("user_id")
+        name: Optional[str] = request.args.get("name")
+
+        categories: list[CategoryReadDTO] = category_service.get_categories(user_id, name)
+        categories_dicts: list[dict] = [category.model_dump() for category in categories]
+        return jsonify(categories_dicts), HTTPStatus.OK
+    except ValueError as e:
+        return create_error_response(str(e)), HTTPStatus.BAD_REQUEST
 
 
 @category_blueprint.route("/<int:category_id>", methods=["GET"])
