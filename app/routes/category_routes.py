@@ -3,9 +3,9 @@ from typing import Optional
 
 from flask import Blueprint, jsonify, request, Response
 
-from app.exceptions.handlers import create_error_response
 from ..dtos import CategoryReadDTO, CategoryCreateDTO, CategoryUpdateDTO
 from ..services import category_service
+from ..utils import get_payload
 
 category_blueprint = Blueprint("categories", __name__)
 
@@ -30,10 +30,7 @@ def get_category_by_id(category_id: int) -> tuple[Response, HTTPStatus]:
 
 @category_blueprint.route("/", methods=["POST"])
 def create_category() -> tuple[Response, HTTPStatus]:
-    payload: Optional[dict] = request.get_json()
-
-    if payload is None:
-        return create_error_response("Missing JSON body"), HTTPStatus.BAD_REQUEST
+    payload: dict = get_payload()
 
     category_create_dto: CategoryCreateDTO = CategoryCreateDTO(**payload)
     category_read_dto: CategoryReadDTO = category_service.create_category(category_create_dto)
@@ -43,10 +40,7 @@ def create_category() -> tuple[Response, HTTPStatus]:
 
 @category_blueprint.route("/<int:category_id>", methods=["PUT"])
 def update_category(category_id: int) -> tuple[Response, HTTPStatus]:
-    payload: Optional[dict] = request.get_json()
-
-    if payload is None:
-        return create_error_response("Missing JSON body"), HTTPStatus.BAD_REQUEST
+    payload: dict = get_payload()
 
     category_update_dto: CategoryUpdateDTO = CategoryUpdateDTO(**payload)
     category_read_dto: CategoryReadDTO = category_service.update_category(category_id, category_update_dto)

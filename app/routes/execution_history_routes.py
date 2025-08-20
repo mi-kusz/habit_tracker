@@ -3,9 +3,9 @@ from typing import Optional
 
 from flask import Blueprint, jsonify, request, Response
 
-from app.exceptions.handlers import create_error_response
 from ..dtos import ExecutionHistoryReadDTO, ExecutionHistoryCreateDTO
 from ..services import execution_history_service
+from ..utils import get_payload
 
 execution_history_blueprint = Blueprint("execution_histories", __name__)
 
@@ -31,10 +31,7 @@ def get_execution_history_by_id(execution_history_id: int) -> tuple[Response, HT
 
 @execution_history_blueprint.route("/", methods=["POST"])
 def create_execution_history() -> tuple[Response, HTTPStatus]:
-    payload: Optional[dict] = request.get_json()
-
-    if payload is None:
-        return create_error_response("Missing JSON body"), HTTPStatus.BAD_REQUEST
+    payload: dict = get_payload()
 
     execution_history_dto: ExecutionHistoryCreateDTO = ExecutionHistoryCreateDTO(**payload)
     execution_history_read_dto: ExecutionHistoryReadDTO = execution_history_service.create_execution_history(execution_history_dto)

@@ -3,9 +3,9 @@ from typing import Optional
 
 from flask import Blueprint, jsonify, request, Response
 
-from app.exceptions.handlers import create_error_response
 from ..dtos import HabitTaskReadDTO, HabitTaskCreateDTO, HabitTaskUpdateDTO
 from ..services import habit_task_service
+from ..utils import get_payload
 
 habit_task_blueprint = Blueprint("habit_tasks", __name__)
 
@@ -30,10 +30,7 @@ def get_habit_task_by_id(habit_task_id: int) -> tuple[Response, HTTPStatus]:
 
 @habit_task_blueprint.route("/", methods=["POST"])
 def create_habit_task() -> tuple[Response, HTTPStatus]:
-    payload: Optional[dict] = request.get_json()
-
-    if payload is None:
-        return create_error_response("Missing JSON body"), HTTPStatus.BAD_REQUEST
+    payload: dict = get_payload()
 
     habit_task_create_dto: HabitTaskCreateDTO = HabitTaskCreateDTO(**payload)
     habit_task_read_dto: HabitTaskReadDTO = habit_task_service.create_habit_task(habit_task_create_dto)
@@ -43,10 +40,7 @@ def create_habit_task() -> tuple[Response, HTTPStatus]:
 
 @habit_task_blueprint.route("/<int:habit_task_id>", methods=["PUT"])
 def update_habit_task(habit_task_id: int) -> tuple[Response, HTTPStatus]:
-    payload: Optional[dict] = request.get_json()
-
-    if payload is None:
-        return create_error_response("Missing JSON body"), HTTPStatus.BAD_REQUEST
+    payload: dict = get_payload()
 
     habit_task_update_dto: HabitTaskUpdateDTO = HabitTaskUpdateDTO(**payload)
     habit_task_read_dto: HabitTaskReadDTO = habit_task_service.update_habit_task(habit_task_id, habit_task_update_dto)

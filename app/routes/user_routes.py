@@ -10,6 +10,7 @@ from ..dtos import UserCreateDTO, UserUpdateDTO, UserReadDTO
 from ..models.User import UserRole
 from ..services import user_service
 from ..services.auth_service import get_jwt_data
+from ..utils import get_payload
 
 user_blueprint = Blueprint("users", __name__)
 
@@ -65,10 +66,7 @@ def get_user_by_email(email: str) -> tuple[Response, HTTPStatus]:
 
 @user_blueprint.route("/", methods=["POST"])
 def create_user() -> tuple[Response, HTTPStatus]:
-    payload: Optional[dict] = request.get_json()
-
-    if payload is None:
-        return create_error_response("Missing JSON body"), HTTPStatus.BAD_REQUEST
+    payload: dict = get_payload()
 
     user_create_dto: UserCreateDTO = UserCreateDTO(**payload)
     user_read_dto: UserReadDTO = user_service.create_user(user_create_dto)
@@ -84,10 +82,7 @@ def update_user(user_id: int) -> tuple[Response, HTTPStatus]:
     if not (role == UserRole.ADMIN or jwt_user_id == user_id):
         raise PermissionError("Forbidden")
 
-    payload: Optional[dict] = request.get_json()
-
-    if payload is None:
-        return create_error_response("Missing JSON body"), HTTPStatus.BAD_REQUEST
+    payload: dict = get_payload()
 
     user_update_dto: UserUpdateDTO = UserUpdateDTO(**payload)
     user_read_dto: UserReadDTO = user_service.update_user(user_id, user_update_dto)

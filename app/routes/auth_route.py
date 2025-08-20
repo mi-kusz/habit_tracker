@@ -1,19 +1,16 @@
 from http import HTTPStatus
 from typing import Optional
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 
-from app.exceptions.handlers import create_error_response
 from ..services import auth_service
+from ..utils import get_payload
 
 auth_blueprint = Blueprint("auth", __name__)
 
 @auth_blueprint.route("/login", methods=["POST"])
 def login():
-    payload: Optional[dict] = request.get_json()
-
-    if payload is None:
-        return create_error_response("Missing JSON body"), HTTPStatus.BAD_REQUEST
+    payload: dict = get_payload()
 
     email: Optional[str] = payload.get("email")
     password: Optional[str] = payload.get("password")
