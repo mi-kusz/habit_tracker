@@ -1,10 +1,10 @@
 from typing import Optional
 
 from sqlalchemy.exc import IntegrityError
-from app import database
 
+from app import database
 from app.dtos import HabitTaskReadDTO, HabitTaskCreateDTO, HabitTaskUpdateDTO
-from app.exceptions import EntityNotFoundException, EntityPersistenceException
+from app.exceptions.exceptions import EntityNotFoundException, EntityPersistenceException
 from app.models import HabitTask
 from app.repositories import habit_task_repository
 from app.utils import str_to_int_or_none

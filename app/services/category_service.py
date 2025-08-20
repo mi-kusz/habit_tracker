@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app import database
 from app.dtos import CategoryReadDTO, CategoryCreateDTO, CategoryUpdateDTO
-from app.exceptions import EntityNotFoundException, EntityPersistenceException
+from app.exceptions.exceptions import EntityNotFoundException, EntityPersistenceException
 from app.models import Category
 from app.repositories import category_repository
 from app.utils import str_to_int_or_none

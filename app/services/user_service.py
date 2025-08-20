@@ -4,8 +4,9 @@ from sqlalchemy.exc import IntegrityError
 
 from app import database
 from app.dtos import UserCreateDTO, UserReadDTO, UserUpdateDTO
-from app.exceptions import EntityPersistenceException, EntityNotFoundException
+from app.exceptions.exceptions import EntityPersistenceException, EntityNotFoundException
 from app.models import User, Category
+from app.models.User import UserRole
 from app.repositories import user_repository, category_repository
 from app.utils import str_to_bool_or_none
 
@@ -82,7 +83,8 @@ def convert_dto_to_model(user_dto: UserCreateDTO) -> User:
         first_name=user_dto.first_name,
         last_name=user_dto.last_name,
         email=user_dto.email,
-        password=user_dto.password
+        password=user_dto.password,
+        role=user_dto.role or UserRole.USER
     )
 
 

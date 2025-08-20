@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app import database
 from app.dtos import ExecutionHistoryReadDTO, ExecutionHistoryCreateDTO
-from app.exceptions import EntityNotFoundException, EntityPersistenceException
+from app.exceptions.exceptions import EntityNotFoundException, EntityPersistenceException
 from app.models import ExecutionHistory
 from app.repositories import execution_history_repository
 from app.utils import str_to_int_or_none, str_to_datetime_or_none

@@ -1,15 +1,9 @@
 from datetime import datetime, timezone
 from typing import Optional
 
-from flask import Response, jsonify
-
 
 def get_utc_time() -> datetime:
     return datetime.now(timezone.utc)
-
-
-def create_error_response(message: str) -> Response:
-    return jsonify({"error": message})
 
 
 def str_to_bool_or_none(string: Optional[str]) -> Optional[bool]:
