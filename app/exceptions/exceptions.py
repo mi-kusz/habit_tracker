@@ -14,13 +14,19 @@ class EntityPersistenceException(AppException):
         super().__init__(self.message)
 
 
-class MissingAuthData(AppException):
+class MissingAuthDataException(AppException):
     def __init__(self):
         self.message = "Missing email or password"
         super().__init__(self.message)
 
 
-class InvalidCredentials(AppException):
+class InvalidCredentialsException(AppException):
     def __init__(self):
         self.message = "Invalid credentials"
+        super().__init__(self.message)
+
+
+class MissingPayloadException(AppException):
+    def __init__(self):
+        self.message = "Missing JSON body"
         super().__init__(self.message)

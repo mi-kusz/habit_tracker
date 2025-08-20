@@ -2,7 +2,7 @@ from typing import Optional
 
 from flask_jwt_extended import create_access_token
 
-from app.exceptions.exceptions import MissingAuthData, InvalidCredentials
+from app.exceptions.exceptions import MissingAuthDataException, InvalidCredentialsException
 from app.models import User
 from app.models.User import UserRole
 from app.repositories import user_repository
@@ -10,12 +10,12 @@ from app.repositories import user_repository
 
 def login(email: Optional[str], password: Optional[str]) -> str:
     if email is None or password is None:
-        raise MissingAuthData()
+        raise MissingAuthDataException()
 
     user: Optional[User] = user_repository.get_user_by_email(email)
 
     if user is None or user.password != password:
-        raise InvalidCredentials()
+        raise InvalidCredentialsException()
 
     return create_access_token(
         identity=str(user.id),
