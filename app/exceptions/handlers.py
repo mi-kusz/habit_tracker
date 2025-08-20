@@ -3,7 +3,8 @@ from http import HTTPStatus
 from flask import Flask, Response, jsonify
 from pydantic import ValidationError
 
-from app.exceptions.exceptions import EntityNotFoundException, EntityPersistenceException
+from app.exceptions.exceptions import EntityNotFoundException, EntityPersistenceException, MissingAuthData, \
+    InvalidCredentials
 
 
 def create_error_response(message: str) -> Response:
@@ -30,3 +31,11 @@ def register_handlers(app: Flask) -> None:
     @app.errorhandler(ValidationError)
     def handle_validation_error(e: ValidationError) -> tuple[Response, HTTPStatus]:
         return create_error_response(str(e.errors())), HTTPStatus.BAD_REQUEST
+
+    @app.errorhandler(MissingAuthData)
+    def handle_missing_auth_data_error(e: MissingAuthData) -> tuple[Response, HTTPStatus]:
+        return create_error_response(str(e)), HTTPStatus.BAD_REQUEST
+
+    @app.errorhandler(InvalidCredentials)
+    def handle_invalid_credentials_error(e: InvalidCredentials) -> tuple[Response, HTTPStatus]:
+        return create_error_response(str(e)), HTTPStatus.BAD_REQUEST
