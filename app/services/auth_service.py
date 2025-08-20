@@ -4,6 +4,7 @@ from flask_jwt_extended import create_access_token
 
 from app.exceptions.exceptions import MissingAuthData, InvalidCredentials
 from app.models import User
+from app.models.User import UserRole
 from app.repositories import user_repository
 
 
@@ -22,8 +23,8 @@ def login(email: Optional[str], password: Optional[str]) -> str:
     )
 
 
-def get_jwt_data(jwt: dict) -> tuple[int, str]:
+def get_jwt_data(jwt: dict) -> tuple[int, UserRole]:
     user_id: int = int(jwt["sub"])
-    role: str = jwt.get("role")
+    role: UserRole = UserRole(jwt.get("role"))
 
     return user_id, role

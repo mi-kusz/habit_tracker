@@ -7,6 +7,7 @@ from flask_jwt_extended import jwt_required, get_jwt
 from app.exceptions.exceptions import EntityNotFoundException
 from app.exceptions.handlers import create_error_response
 from ..dtos import UserCreateDTO, UserUpdateDTO, UserReadDTO
+from ..models.User import UserRole
 from ..services import user_service
 from ..services.auth_service import get_jwt_data
 
@@ -18,7 +19,7 @@ user_blueprint = Blueprint("users", __name__)
 def get_users() -> tuple[Response, HTTPStatus]:
     _, role = get_jwt_data(get_jwt())
 
-    if role != "ADMIN":
+    if role != UserRole.ADMIN:
         raise PermissionError("Forbidden")
 
     first_name: Optional[str] = request.args.get("first_name")
@@ -35,7 +36,7 @@ def get_users() -> tuple[Response, HTTPStatus]:
 def get_user_by_id(user_id: int) -> tuple[Response, HTTPStatus]:
     jwt_user_id, role = get_jwt_data(get_jwt())
 
-    if not (role == "ADMIN" or jwt_user_id == user_id):
+    if not (role == UserRole.ADMIN or jwt_user_id == user_id):
         raise PermissionError("Forbidden")
 
     user: UserReadDTO = user_service.get_user_by_id(user_id)
@@ -51,12 +52,12 @@ def get_user_by_email(email: str) -> tuple[Response, HTTPStatus]:
         user_id, role = get_jwt_data(get_jwt())
         user: UserReadDTO = user_service.get_user_by_email(email)
 
-        if not (role == "ADMIN" or user.id == user_id):
+        if not (role == UserRole.ADMIN or user.id == user_id):
             raise PermissionError("Forbidden")
 
         return jsonify(user.model_dump()), HTTPStatus.OK
     except (EntityNotFoundException, PermissionError) as e:
-        if role == "ADMIN":
+        if role == UserRole.ADMIN:
             return create_error_response(str(e)), HTTPStatus.NOT_FOUND
         else:
             return create_error_response(str(e)), HTTPStatus.FORBIDDEN
@@ -80,7 +81,7 @@ def create_user() -> tuple[Response, HTTPStatus]:
 def update_user(user_id: int) -> tuple[Response, HTTPStatus]:
     jwt_user_id, role = get_jwt_data(get_jwt())
 
-    if not (role == "ADMIN" or jwt_user_id == user_id):
+    if not (role == UserRole.ADMIN or jwt_user_id == user_id):
         raise PermissionError("Forbidden")
 
     payload: Optional[dict] = request.get_json()
@@ -99,7 +100,7 @@ def update_user(user_id: int) -> tuple[Response, HTTPStatus]:
 def delete_user(user_id: int) -> tuple[Response, HTTPStatus]:
     jwt_user_id, role = get_jwt_data(get_jwt())
 
-    if not (role == "ADMIN" or jwt_user_id == user_id):
+    if not (role == UserRole.ADMIN or jwt_user_id == user_id):
         raise PermissionError("Forbidden")
 
     user: UserReadDTO = user_service.delete_user(user_id)
