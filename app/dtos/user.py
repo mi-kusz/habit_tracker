@@ -1,6 +1,8 @@
 from datetime import datetime
 from typing import Optional
 
+from app.models.User import UserRole
+
 from pydantic import BaseModel, EmailStr, Field
 
 
@@ -16,6 +18,7 @@ class UserBaseDTO(BaseModel):
 
 class UserCreateDTO(UserBaseDTO):
     password: str = Field(..., min_length=1)
+    role: Optional[UserRole] = None
 
 
 class UserReadDTO(UserBaseDTO):
