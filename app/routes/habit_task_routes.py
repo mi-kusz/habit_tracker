@@ -70,4 +70,4 @@ def delete_habit_task(habit_task_id: int) -> tuple[Response, HTTPStatus]:
 
     habit_task: HabitTaskReadDTO = habit_task_service.delete_habit_task(jwt_user_id, role, habit_task_id)
 
-    return jsonify(habit_task.model_dump()), HTTPStatus.NO_CONTENT
+    return jsonify({}), HTTPStatus.NO_CONTENT
