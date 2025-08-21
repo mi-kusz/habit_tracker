@@ -13,9 +13,13 @@ from app.utils import str_to_bool_or_none
 entity_type: str = "User"
 
 
-def get_users(first_name: Optional[str],
+def get_users(requester_id: int,
+              requester_role: UserRole,
+              first_name: Optional[str],
               last_name: Optional[str],
               is_active: Optional[str]) -> list[UserReadDTO]:
+    if requester_role != UserRole.ADMIN:
+        raise PermissionError("Forbidden")
 
     is_active_bool: Optional[bool] = str_to_bool_or_none(is_active)
 
@@ -24,14 +28,32 @@ def get_users(first_name: Optional[str],
     return [UserReadDTO.model_validate(user) for user in users]
 
 
-def get_user_by_id(user_id: int) -> UserReadDTO:
+def get_user_by_id(requester_id: int,
+                   requester_role: UserRole,
+                   user_id: int) -> UserReadDTO:
+    if requester_role != UserRole.ADMIN and requester_id != user_id:
+        raise PermissionError("Forbidden")
+
     user: User = get_user_entity_by_id(user_id)
 
     return UserReadDTO.model_validate(user)
 
 
-def get_user_by_email(email: str) -> UserReadDTO:
-    user: User = get_user_entity_by_email(email)
+def get_user_by_email(requester_id: int,
+                      requester_role: UserRole,
+                      email: str) -> UserReadDTO:
+    # Security note: normal users get 403 even if email doesn't exist,
+    # so they cannot probe the database for valid emails.
+    try:
+        user: User = get_user_entity_by_email(email)
+    except EntityNotFoundException as e:
+        if requester_role == UserRole.ADMIN:
+            raise e
+        else:
+            raise PermissionError("Forbidden")
+
+    if requester_role != UserRole.ADMIN and requester_id != user.id:
+        raise PermissionError("Forbidden")
 
     return UserReadDTO.model_validate(user)
 
@@ -50,7 +72,13 @@ def create_user(user_dto: UserCreateDTO) -> UserReadDTO:
         raise EntityPersistenceException(entity_type)
 
 
-def update_user(user_id: int, user_updates: UserUpdateDTO) -> UserReadDTO:
+def update_user(requester_id: int,
+                requester_role: UserRole,
+                user_id: int,
+                user_updates: UserUpdateDTO) -> UserReadDTO:
+    if requester_role != UserRole.ADMIN and requester_id != user_id:
+        raise PermissionError("Forbidden")
+
     with database.session.begin():
         user: User = get_user_entity_by_id(user_id)
 
@@ -69,7 +97,12 @@ def update_user(user_id: int, user_updates: UserUpdateDTO) -> UserReadDTO:
     return UserReadDTO.model_validate(user)
 
 
-def delete_user(user_id: int) -> UserReadDTO:
+def delete_user(requester_id: int,
+                requester_role: UserRole,
+                user_id: int) -> UserReadDTO:
+    if requester_role != UserRole.ADMIN and requester_id != user_id:
+        raise PermissionError("Forbidden")
+
     with database.session.begin():
         user: User = get_user_entity_by_id(user_id)
 
