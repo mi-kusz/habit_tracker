@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 
 
 class CategoryBaseDTO(BaseModel):
+    user_id: int
     name: str = Field(..., min_length=1, max_length=50)
     description: Optional[str] = Field(None, max_length=250)
 
@@ -14,7 +15,7 @@ class CategoryBaseDTO(BaseModel):
 
 
 class CategoryCreateDTO(CategoryBaseDTO):
-    user_id: int
+    pass
 
 
 class CategoryReadDTO(CategoryBaseDTO):

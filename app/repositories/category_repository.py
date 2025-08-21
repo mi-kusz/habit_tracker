@@ -18,8 +18,13 @@ def get_categories(user_id: Optional[int],
     return query.all()
 
 
-def get_category_by_id(category_id: int) -> Optional[Category]:
-    return Category.query.get(category_id)
+def get_category_by_id(category_id: int, user_id: Optional[int]) -> Optional[Category]:
+    query = Category.query.filter(Category.id == category_id)
+
+    if user_id is not None:
+        query = query.filter(Category.user_id == user_id)
+
+    return query.first()
 
 
 def create_category(session: Session, category: Category) -> Category:
