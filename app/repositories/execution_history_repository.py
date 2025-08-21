@@ -3,13 +3,24 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
-from app.models import ExecutionHistory
+from app.models import ExecutionHistory, HabitTask
 
 
-def get_execution_histories(habit_task_id: Optional[int],
+def get_execution_histories(user_id: Optional[int],
+                            category_id: Optional[int],
+                            habit_task_id: Optional[int],
                             start_datetime: Optional[datetime],
                             end_datetime: Optional[datetime]) -> list[ExecutionHistory]:
     query = ExecutionHistory.query
+
+    if user_id is not None:
+        query = query.filter(ExecutionHistory.habit_task.has(
+            HabitTask.category.has(user_id=user_id)
+            )
+        )
+
+    if category_id is not None:
+        query = query.filter(ExecutionHistory.habit_task.has(category_id=category_id))
 
     if habit_task_id is not None:
         query = query.filter(ExecutionHistory.habit_task_id == habit_task_id)
@@ -23,8 +34,15 @@ def get_execution_histories(habit_task_id: Optional[int],
     return query.all()
 
 
-def get_execution_history_by_id(execution_history_id: int) -> Optional[ExecutionHistory]:
-    return ExecutionHistory.query.get(execution_history_id)
+def get_execution_history_by_id(execution_history_id: int, user_id: Optional[int]) -> Optional[ExecutionHistory]:
+    query = ExecutionHistory.query.filter(ExecutionHistory.id == execution_history_id)
+
+    if user_id is not None:
+        query = query.filter(ExecutionHistory.habit_task.has(
+            HabitTask.category.has(user_id=user_id)
+        ))
+
+    return query.first()
 
 
 def create_execution_history(session: Session, execution_history: ExecutionHistory) -> ExecutionHistory:
