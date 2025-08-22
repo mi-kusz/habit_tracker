@@ -14,7 +14,7 @@ def login(email: Optional[str], password: Optional[str]) -> str:
 
     user: Optional[User] = user_repository.get_user_by_email(email)
 
-    if user is None or user.password != password:
+    if user is None or not user.check_password(password):
         raise InvalidCredentialsException()
 
     return create_access_token(

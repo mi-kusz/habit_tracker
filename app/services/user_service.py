@@ -109,13 +109,16 @@ def delete_user(requester_id: int,
 
 
 def convert_dto_to_model(user_dto: UserCreateDTO) -> User:
-    return User(
+    user: User = User(
         first_name=user_dto.first_name,
         last_name=user_dto.last_name,
         email=user_dto.email,
-        password=user_dto.password,
         role=user_dto.role or UserRole.USER
     )
+
+    user.set_password(user_dto.password)
+
+    return user
 
 
 def get_user_entity_by_id(user_id: int) -> User:
