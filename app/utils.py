@@ -39,7 +39,7 @@ def str_to_datetime_or_none(string: Optional[str]) -> Optional[datetime]:
 
 
 def get_payload() -> dict:
-    payload: Optional[dict] = request.get_json()
+    payload: Optional[dict] = request.get_json(silent=True)
 
     if payload is None:
         raise MissingPayloadException()
