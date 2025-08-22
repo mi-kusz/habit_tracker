@@ -79,6 +79,8 @@ def update_habit_task(requester_id: int,
                       requester_role: UserRole,
                       habit_task_id: int,
                       habit_task_updates: HabitTaskUpdateDTO) -> HabitTaskReadDTO:
+    updates: dict = habit_task_updates.model_dump(exclude_unset=True)
+
     try:
         with database.session.begin():
             if requester_role == UserRole.ADMIN:
@@ -86,14 +88,9 @@ def update_habit_task(requester_id: int,
             else:
                 habit_task: HabitTask = get_habit_task_entity(habit_task_id, requester_id)
 
-            if habit_task_updates.category_id is not None:
-                habit_task.category_id = habit_task_updates.category_id
-
-            if habit_task_updates.name is not None:
-                habit_task.name = habit_task_updates.name
-
-            if habit_task_updates.description is not None:
-                habit_task.description = habit_task_updates.description
+            for field, value in updates.items():
+                if hasattr(habit_task, field):
+                    setattr(habit_task, field, value)
     except EntityNotFoundException as e:
         if requester_role == UserRole.ADMIN:
             raise e

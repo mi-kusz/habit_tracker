@@ -69,6 +69,8 @@ def update_category(requester_id: int,
                     requester_role: UserRole,
                     category_id: int,
                     category_updates: CategoryUpdateDTO) -> CategoryReadDTO:
+    updates: dict = category_updates.model_dump(exclude_unset=True)
+
     try:
         with database.session.begin():
             if requester_role == UserRole.ADMIN:
@@ -76,11 +78,9 @@ def update_category(requester_id: int,
             else:
                 category: Category = get_category_entity(category_id, requester_id)
 
-            if category_updates.name is not None:
-                category.name = category_updates.name
-
-            if category_updates.description is not None:
-                category.description = category_updates.description
+            for field, value in updates.items():
+                if hasattr(category, field):
+                    setattr(category, field, value)
     except EntityNotFoundException as e:
         if requester_role == UserRole.ADMIN:
             raise e

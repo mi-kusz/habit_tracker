@@ -79,20 +79,14 @@ def update_user(requester_id: int,
     if requester_role != UserRole.ADMIN and requester_id != user_id:
         raise PermissionError("Forbidden")
 
+    updates: dict = user_updates.model_dump(exclude_unset=True)
+
     with database.session.begin():
         user: User = get_user_entity_by_id(user_id)
 
-        if user_updates.first_name is not None:
-            user.first_name = user_updates.first_name
-
-        if user_updates.last_name is not None:
-            user.last_name = user_updates.last_name
-
-        if user_updates.email is not None:
-            user.email = user_updates.email
-
-        if user_updates.is_active is not None:
-            user.is_active = user_updates.is_active
+        for field, value in updates.items():
+            if hasattr(user, field):
+                setattr(user, field, value)
 
     return UserReadDTO.model_validate(user)
 
