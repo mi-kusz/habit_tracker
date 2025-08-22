@@ -86,6 +86,8 @@ def update_category(requester_id: int,
             raise e
         else:
             raise PermissionError("Forbidden")
+    except IntegrityError:
+        raise EntityPersistenceException(entity_type)
 
     return CategoryReadDTO.model_validate(category)
 

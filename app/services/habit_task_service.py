@@ -96,6 +96,8 @@ def update_habit_task(requester_id: int,
             raise e
         else:
             raise PermissionError("Forbidden")
+    except IntegrityError:
+        raise EntityPersistenceException(entity_type)
 
     return HabitTaskReadDTO.model_validate(habit_task)
 

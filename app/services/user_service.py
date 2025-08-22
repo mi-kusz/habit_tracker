@@ -81,12 +81,15 @@ def update_user(requester_id: int,
 
     updates: dict = user_updates.model_dump(exclude_unset=True)
 
-    with database.session.begin():
-        user: User = get_user_entity_by_id(user_id)
+    try:
+        with database.session.begin():
+            user: User = get_user_entity_by_id(user_id)
 
-        for field, value in updates.items():
-            if hasattr(user, field):
-                setattr(user, field, value)
+            for field, value in updates.items():
+                if hasattr(user, field):
+                    setattr(user, field, value)
+    except IntegrityError:
+        raise EntityPersistenceException(entity_type)
 
     return UserReadDTO.model_validate(user)
 
