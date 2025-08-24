@@ -1,3 +1,6 @@
+bcrypt
+pytest-mock
+faker
 sqlalchemy
 flask
 flask_sqlalchemy
