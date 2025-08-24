@@ -1,11 +1,10 @@
+from datetime import datetime, timezone
 from typing import Optional
 
 import pytest
 from flask import Flask
 
 from app import utils
-from datetime import datetime, timezone
-
 from app.exceptions.exceptions import MissingPayloadException
 
 
