@@ -59,9 +59,9 @@ def create_habit_task(requester_id: int,
         with database.session.begin():
             # Check if category exists / exists and belongs to requester
             if requester_role == UserRole.ADMIN:
-                category: Category = get_category_entity(habit_task.category_id)
+                _category: Category = get_category_entity(habit_task.category_id)
             else:
-                category: Category = get_category_entity(habit_task.category_id, requester_id)
+                _category: Category = get_category_entity(habit_task.category_id, requester_id)
 
             created_habit_task: HabitTask = habit_task_repository.create_habit_task(database.session, habit_task)
     except EntityNotFoundException as e:
@@ -87,6 +87,9 @@ def update_habit_task(requester_id: int,
                 habit_task: HabitTask = get_habit_task_entity(habit_task_id)
             else:
                 habit_task: HabitTask = get_habit_task_entity(habit_task_id, requester_id)
+
+                if "category_id" in updates:
+                    _category: Category = get_category_entity(updates["category_id"], habit_task.category.user_id) # Check if new category belongs to user
 
             for field, value in updates.items():
                 if hasattr(habit_task, field):
