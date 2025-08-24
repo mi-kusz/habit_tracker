@@ -57,7 +57,8 @@ def update_category(category_id: int) -> tuple[Response, HTTPStatus]:
     payload: dict = get_payload()
 
     category_update_dto: CategoryUpdateDTO = CategoryUpdateDTO(**payload)
-    category_read_dto: CategoryReadDTO = category_service.update_category(jwt_user_id, role, category_id, category_update_dto)
+    category_read_dto: CategoryReadDTO = category_service.update_category(jwt_user_id, role, category_id,
+                                                                          category_update_dto)
 
     return jsonify(category_read_dto.model_dump()), HTTPStatus.OK
 

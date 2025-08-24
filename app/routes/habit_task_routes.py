@@ -21,7 +21,8 @@ def get_habit_tasks() -> tuple[Response, HTTPStatus]:
     category_id: Optional[str] = request.args.get("category_id")
     name: Optional[str] = request.args.get("name")
 
-    habit_tasks: list[HabitTaskReadDTO] = habit_task_service.get_habit_tasks(jwt_user_id, role, user_id, category_id, name)
+    habit_tasks: list[HabitTaskReadDTO] = habit_task_service.get_habit_tasks(jwt_user_id, role, user_id, category_id,
+                                                                             name)
     habit_tasks_dicts: list[dict] = [habit_task.model_dump() for habit_task in habit_tasks]
 
     return jsonify(habit_tasks_dicts), HTTPStatus.OK
@@ -45,7 +46,8 @@ def create_habit_task() -> tuple[Response, HTTPStatus]:
     payload: dict = get_payload()
 
     habit_task_create_dto: HabitTaskCreateDTO = HabitTaskCreateDTO(**payload)
-    habit_task_read_dto: HabitTaskReadDTO = habit_task_service.create_habit_task(jwt_user_id, role, habit_task_create_dto)
+    habit_task_read_dto: HabitTaskReadDTO = habit_task_service.create_habit_task(jwt_user_id, role,
+                                                                                 habit_task_create_dto)
 
     return jsonify(habit_task_read_dto.model_dump()), HTTPStatus.CREATED
 
@@ -58,7 +60,8 @@ def update_habit_task(habit_task_id: int) -> tuple[Response, HTTPStatus]:
     payload: dict = get_payload()
 
     habit_task_update_dto: HabitTaskUpdateDTO = HabitTaskUpdateDTO(**payload)
-    habit_task_read_dto: HabitTaskReadDTO = habit_task_service.update_habit_task(jwt_user_id, role, habit_task_id, habit_task_update_dto)
+    habit_task_read_dto: HabitTaskReadDTO = habit_task_service.update_habit_task(jwt_user_id, role, habit_task_id,
+                                                                                 habit_task_update_dto)
 
     return jsonify(habit_task_read_dto.model_dump()), HTTPStatus.CREATED
 

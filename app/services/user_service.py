@@ -65,7 +65,8 @@ def create_user(user_dto: UserCreateDTO) -> UserReadDTO:
         with database.session.begin():
             created_user: User = user_repository.create_user(database.session, user)
             database.session.flush()
-            _created_category: Category = category_repository.create_default_category_for_user(database.session, created_user.id)
+            _created_category: Category = category_repository.create_default_category_for_user(database.session,
+                                                                                               created_user.id)
 
         return UserReadDTO.model_validate(created_user)
     except IntegrityError:

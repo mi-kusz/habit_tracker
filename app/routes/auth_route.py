@@ -8,6 +8,7 @@ from ..utils import get_payload
 
 auth_blueprint = Blueprint("auth", __name__)
 
+
 @auth_blueprint.route("/login", methods=["POST"])
 def login():
     payload: dict = get_payload()

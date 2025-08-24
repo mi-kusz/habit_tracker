@@ -16,7 +16,7 @@ def get_execution_histories(user_id: Optional[int],
     if user_id is not None:
         query = query.filter(ExecutionHistory.habit_task.has(
             HabitTask.category.has(user_id=user_id)
-            )
+        )
         )
 
     if category_id is not None:

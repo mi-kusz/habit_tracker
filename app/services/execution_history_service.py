@@ -34,7 +34,11 @@ def get_execution_histories(requester_id: int,
     if requester_role != UserRole.ADMIN and requester_id != user_id_int:
         raise PermissionError("Forbidden")
 
-    execution_histories: list[ExecutionHistory] = execution_history_repository.get_execution_histories(user_id_int, category_id_int, habit_task_id_int, start_datetime_dt, end_datetime_dt)
+    execution_histories: list[ExecutionHistory] = execution_history_repository.get_execution_histories(user_id_int,
+                                                                                                       category_id_int,
+                                                                                                       habit_task_id_int,
+                                                                                                       start_datetime_dt,
+                                                                                                       end_datetime_dt)
 
     return [ExecutionHistoryReadDTO.model_validate(execution_history) for execution_history in execution_histories]
 
@@ -65,11 +69,12 @@ def create_execution_history(requester_id: int,
         with database.session.begin():
             # Check if habit task exists / exists and belongs to requester
             if requester_role == UserRole.ADMIN:
-                habit_task: HabitTask = get_habit_task_entity(execution_history.habit_task_id)
+                _habit_task: HabitTask = get_habit_task_entity(execution_history.habit_task_id)
             else:
-                habit_task: HabitTask = get_habit_task_entity(execution_history.habit_task_id, requester_id)
+                _habit_task: HabitTask = get_habit_task_entity(execution_history.habit_task_id, requester_id)
 
-            created_execution_history: ExecutionHistory = execution_history_repository.create_execution_history(database.session, execution_history)
+            created_execution_history: ExecutionHistory = execution_history_repository.create_execution_history(
+                database.session, execution_history)
     except EntityNotFoundException as e:
         if requester_role == UserRole.ADMIN:
             raise e
@@ -109,7 +114,8 @@ def convert_dto_to_model(execution_history_dto: ExecutionHistoryCreateDTO) -> Ex
 
 
 def get_execution_history_entity(execution_history_id: int, user_id: Optional[int] = None) -> ExecutionHistory:
-    execution_history: Optional[ExecutionHistory] = execution_history_repository.get_execution_history_by_id(execution_history_id, user_id)
+    execution_history: Optional[ExecutionHistory] = execution_history_repository.get_execution_history_by_id(
+        execution_history_id, user_id)
 
     if execution_history is None:
         raise EntityNotFoundException(entity_type)

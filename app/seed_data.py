@@ -10,6 +10,7 @@ from app.models.User import UserRole
 app = create_app()
 fake = Faker()
 
+
 def seed_users(n: int = 10) -> list[User]:
     users: list[User] = []
 
@@ -69,7 +70,8 @@ def seed_habit_tasks(categories: list[Category], habit_tasks_per_category: int =
     return habit_tasks
 
 
-def seed_execution_histories(habit_tasks: list[HabitTask], execution_histories_per_habit_task: int = 15) -> list[ExecutionHistory]:
+def seed_execution_histories(habit_tasks: list[HabitTask], execution_histories_per_habit_task: int = 15) -> list[
+    ExecutionHistory]:
     execution_histories: list[ExecutionHistory] = []
 
     for habit_task in habit_tasks:
